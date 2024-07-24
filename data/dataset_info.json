@@ -1,4 +1,7 @@
 {
+  "alphamath": {
+    "hf_hub_url": "MARIO-Math-Reasoning/AlphaMath-Trainset"
+  },
   "identity": {
     "file_name": "identity.json"
   },

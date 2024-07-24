@@ -809,6 +809,13 @@ _register_template(
 
 
 _register_template(
+    name="vanilla",
+    format_separator=EmptyFormatter(slots=["\n"]),
+    efficient_eos=True,
+)
+
+
+_register_template(
     name="vicuna",
     format_user=StringFormatter(slots=["USER: {{content}} ASSISTANT:"]),
     default_system=(

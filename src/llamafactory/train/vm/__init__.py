@@ -12,21 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .collator import KTODataCollatorWithPadding, PairwiseDataCollatorWithPadding, SFTDataCollatorWith4DAttentionMask, VMDataCollatorForSeq2Seq
-from .data_utils import Role, split_dataset
-from .loader import get_dataset
-from .template import TEMPLATES, Template, get_template_and_fix_tokenizer
+from .workflow import run_vm
 
 
-__all__ = [
-    "KTODataCollatorWithPadding",
-    "PairwiseDataCollatorWithPadding",
-    "SFTDataCollatorWith4DAttentionMask",
-    "VMDataCollatorForSeq2Seq",
-    "Role",
-    "split_dataset",
-    "get_dataset",
-    "TEMPLATES",
-    "Template",
-    "get_template_and_fix_tokenizer",
-]
+__all__ = ["run_vm"]

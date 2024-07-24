@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Callable, Literal, Optional, Tuple
 from .processors.feedback import preprocess_feedback_dataset
 from .processors.pairwise import preprocess_pairwise_dataset, print_pairwise_dataset_example
 from .processors.pretrain import preprocess_pretrain_dataset
+from .processors.value import preprocess_value_dataset
 from .processors.supervised import (
     preprocess_packed_supervised_dataset,
     preprocess_supervised_dataset,
@@ -35,7 +36,7 @@ if TYPE_CHECKING:
 
 def get_preprocess_and_print_func(
     data_args: "DataArguments",
-    stage: Literal["pt", "sft", "rm", "ppo", "kto"],
+    stage: Literal["pt", "sft", "rm", "vm", "ppo", "kto"],
     template: "Template",
     tokenizer: "PreTrainedTokenizer",
     processor: Optional["ProcessorMixin"],
@@ -88,6 +89,15 @@ def get_preprocess_and_print_func(
             data_args=data_args,
         )
         print_function = partial(print_pairwise_dataset_example, tokenizer=tokenizer)
+    elif stage == "vm":
+        preprocess_func = partial(
+            preprocess_value_dataset,
+            template=template,
+            tokenizer=tokenizer,
+            processor=processor,
+            data_args=data_args,
+        )
+        print_function = partial(print_unsupervised_dataset_example, tokenizer=tokenizer)
     elif stage == "kto":
         preprocess_func = partial(
             preprocess_feedback_dataset,
