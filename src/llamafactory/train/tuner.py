@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import torch
 from transformers import PreTrainedModel
+from trl import PreTrainedModelWrapper
 
 from ..data import get_template_and_fix_tokenizer
 from ..extras.constants import V_HEAD_SAFE_WEIGHTS_NAME, V_HEAD_WEIGHTS_NAME
@@ -76,12 +77,17 @@ def export_model(args: Optional[Dict[str, Any]] = None) -> None:
     tokenizer = tokenizer_module["tokenizer"]
     processor = tokenizer_module["processor"]
     get_template_and_fix_tokenizer(tokenizer, data_args.template)
-    model = load_model(tokenizer, model_args, finetuning_args)  # must after fixing tokenizer to resize vocab
+
+    if finetuning_args.stage == "vm":
+        model = load_model(tokenizer, model_args, finetuning_args)  # must after fixing tokenizer to resize vocab
+        model.config.value_model = True
+    else:
+        model = load_model(tokenizer, model_args, finetuning_args)  # must after fixing tokenizer to resize vocab
 
     if getattr(model, "quantization_method", None) is not None and model_args.adapter_name_or_path is not None:
         raise ValueError("Cannot merge adapters to a quantized model.")
 
-    if not isinstance(model, PreTrainedModel):
+    if not (isinstance(model, PreTrainedModel) or isinstance(model, PreTrainedModelWrapper)):
         raise ValueError("The model is not a `PreTrainedModel`, export aborted.")
 
     if getattr(model, "quantization_method", None) is not None:  # quantized model adopts float16 type
@@ -109,7 +115,7 @@ def export_model(args: Optional[Dict[str, Any]] = None) -> None:
             safe_serialization=(not model_args.export_legacy_format),
         )
 
-    if finetuning_args.stage == "rm" or finetuning_args.stage == "vm": # TODO: verify if this is needed for vm
+    if finetuning_args.stage == "rm" or finetuning_args.stage == "vm":
         if model_args.adapter_name_or_path is not None:
             vhead_path = model_args.adapter_name_or_path[-1]
         else:
