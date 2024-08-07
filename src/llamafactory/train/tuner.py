@@ -51,14 +51,14 @@ def run_exp(args: Optional[Dict[str, Any]] = None, callbacks: List["TrainerCallb
         run_sft(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
     elif finetuning_args.stage == "rm":
         run_rm(model_args, data_args, training_args, finetuning_args, callbacks)
-    elif finetuning_args.stage == "vm":
-        run_vm(model_args, data_args, training_args, finetuning_args, callbacks)
     elif finetuning_args.stage == "ppo":
         run_ppo(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
     elif finetuning_args.stage == "dpo":
         run_dpo(model_args, data_args, training_args, finetuning_args, callbacks)
     elif finetuning_args.stage == "kto":
         run_kto(model_args, data_args, training_args, finetuning_args, callbacks)
+    elif finetuning_args.stage == "vm":
+        run_vm(model_args, data_args, training_args, finetuning_args, callbacks)
     else:
         raise ValueError("Unknown task: {}.".format(finetuning_args.stage))
 
@@ -109,7 +109,7 @@ def export_model(args: Optional[Dict[str, Any]] = None) -> None:
             safe_serialization=(not model_args.export_legacy_format),
         )
 
-    if finetuning_args.stage == "rm":
+    if finetuning_args.stage == "rm" or finetuning_args.stage == "vm": # TODO: verify if this is needed for vm
         if model_args.adapter_name_or_path is not None:
             vhead_path = model_args.adapter_name_or_path[-1]
         else:
