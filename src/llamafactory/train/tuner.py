@@ -79,7 +79,7 @@ def export_model(args: Optional[Dict[str, Any]] = None) -> None:
     get_template_and_fix_tokenizer(tokenizer, data_args.template)
 
     if finetuning_args.stage == "vm":
-        model = load_model(tokenizer, model_args, finetuning_args)  # must after fixing tokenizer to resize vocab
+        model = load_model(tokenizer, model_args, finetuning_args, add_valuehead=True)  # must after fixing tokenizer to resize vocab
         model.config.value_model = True
     else:
         model = load_model(tokenizer, model_args, finetuning_args)  # must after fixing tokenizer to resize vocab
